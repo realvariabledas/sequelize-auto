@@ -24,6 +24,7 @@ var argv = require('yargs')
   .alias('s', 'schema')
   .alias('z', 'typescript')
   .alias('f', 'camel-file-name')
+  .alias('paranoid', 'paranoid')
   .describe('h', 'IP/Hostname for the database.')
   .describe('d', 'Database name.')
   .describe('u', 'Username for database.')
@@ -40,6 +41,7 @@ var argv = require('yargs')
   .describe('s', 'Database schema from which to retrieve tables')
   .describe('z', 'Output models as typescript with a definitions file')
   .describe('f', 'Use camel case for file name')
+  .describe('paranoid', 'Enabling Soft delete using `deletedAt` column')
   .argv;
 
 var dir = !argv.n && (argv.o || path.resolve(process.cwd() + '/models'));
@@ -64,6 +66,7 @@ if (configFile.additional) {
   additional = configFile.additional;
 }
 
+
 configFile.additional = additional;
 configFile.dialect = argv.e || configFile.dialect || 'mysql';
 configFile.port = argv.p || configFile.port || getDefaultPort(configFile.dialect);
@@ -72,9 +75,11 @@ configFile.storage = argv.d;
 configFile.tables = configFile.tables || (argv.t && argv.t.split(',')) || null;
 configFile.skipTables = configFile.skipTables || (argv.T && argv.T.split(',')) || null;
 configFile.camelCase = !!argv.C;
+configFile.camelCaseForFileName = !!argv.C;
 configFile.schema = argv.s || configFile.schema;
 configFile.typescript = argv.z || configFile.typescript || false;
 configFile.camelCaseForFileName = argv.f || configFile.camelCaseForFileName || false;
+configFile.paranoid = argv.paranoid || configFile.paranoid || false;
 
 function getDefaultPort(dialect) {
     switch (dialect.toLowerCase()) {
